@@ -2,6 +2,7 @@ package EmployeePayroll_JDBC;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,13 +38,23 @@ public class EmployeePayrollServiceTest {
 		Assert.assertTrue(result);
     }
 	@Test
-	public void givenEmployeePayrollData_WhenRetrievedBasedOnStartDate_ShouldReturnResult() throws EmployeePayrollException {
+	public void givenEmployeePayrollData_WhenRetrievedBasedOnStartDate_ShouldReturnResult()
+			throws EmployeePayrollException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readEmployeePayrollData();
 		LocalDate startDate = LocalDate.parse("2018-01-01");
 		LocalDate endDate = LocalDate.now();
-		List<EmployeePayrollData> matchingRecords = employeePayrollService.getEmployeePayrollDataByStartDate(startDate,endDate);
+		
+		List<EmployeePayrollData> matchingRecords = employeePayrollService.getEmployeePayrollDataByStartDate(startDate,
+				endDate);
 		Assert.assertEquals(matchingRecords.get(0), employeePayrollService.getEmployeePayrollData("Harry"));
+	}
+	@Test
+	public void givenEmployee_PerformedVariousOperations_ShouldGiveResult() throws EmployeePayrollException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData();
+		Map<String, Double> maxSalaryByGender = employeePayrollService.performOperationByGender("salary", "MAX");
+		Assert.assertEquals(3000000.0, maxSalaryByGender.get("F"), 0.0);
 	}
 
 }

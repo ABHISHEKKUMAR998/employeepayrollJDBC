@@ -2,6 +2,7 @@ package EmployeePayroll_JDBC;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService {
 	public PayrollServiceDB payrollServiceDB;
@@ -37,5 +38,9 @@ public class EmployeePayrollService {
 	public List<EmployeePayrollData> getEmployeePayrollDataByStartDate(LocalDate startDate, LocalDate endDate)
 			throws EmployeePayrollException {
 		return this.payrollServiceDB.getEmployeePayrollDataByStartingDate(startDate, endDate);
+	}
+	public Map<String, Double> performOperationByGender(String column, String operation)
+			throws EmployeePayrollException {
+		return this.payrollServiceDB.performAverageAndMinAndMaxOperations(column, operation);
 	}
 }
