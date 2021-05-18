@@ -1,5 +1,6 @@
 package EmployeePayroll_JDBC;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -75,9 +76,10 @@ public class PayrollServiceDB {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String objectname = resultSet.getString("name");
-				double salary = resultSet.getDouble("basic_pay");
+				double salary = resultSet.getDouble("salary");
+				String gender = resultSet.getString("gender");
 				LocalDate startDate = resultSet.getDate("start").toLocalDate();
-				employeePayrollList.add(new EmployeePayrollData(id, objectname, salary, startDate));
+				employeePayrollList.add(new EmployeePayrollData(id, objectname, gender, salary, startDate));
 			}
 			return employeePayrollList;
 		} catch (SQLException e) {
@@ -157,7 +159,7 @@ public class PayrollServiceDB {
 	public Map<String, Double> performAverageAndMinAndMaxOperations(String column, String operation)
 			throws EmployeePayrollException {
 	
-		String sql = String.format("SELECT gender,%s(%s) FROM employee_payroll GROUP BY gender;" , operation , column);
+		String sql = String.format("SELECT gender,%s(%s) FROM employee_payroll GROUP BY gender;", operation, column);
 		Map<String, Double> mapValues = new HashMap<>();
 		try (Connection connection = this.getConnection()) {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -169,5 +171,26 @@ public class PayrollServiceDB {
 			throw new EmployeePayrollException("Connection Failed.");
 		}
 		return mapValues;
+	}
+	public EmployeePayrollData addEmployeeToPayroll(String name, String gender, double salary, LocalDate startDate)
+			throws EmployeePayrollException {
+		int employeeId = -1;
+		EmployeePayrollData employeePayrollData = null;
+		String sql = String.format(
+				"INSERT INTO employee_payroll(name,gender,salary,start) " + "VALUES ( '%s', '%s', %s, '%s' )", name,
+				gender, salary, Date.valueOf(startDate));
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			int rowsAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowsAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					employeeId = resultSet.getInt(1);
+			}
+			employeePayrollData = new EmployeePayrollData(employeeId, name, gender, salary, startDate);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollData;
 	}
 }
