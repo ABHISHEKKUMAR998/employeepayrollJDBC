@@ -52,6 +52,29 @@ public class EmployeePayrollData {
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		EmployeePayrollData that = (EmployeePayrollData) obj;
+		if (id != that.id)
+			return false;
+		if (name == null) {
+			if (that.name != null)
+				return false;
+		} else if (!name.equals(that.name))
+			return false;
+		if (Double.doubleToLongBits(salary) != Double.doubleToLongBits(that.salary))
+			return false;
+		if (startDate == null) {
+			if (that.startDate != null)
+				return false;
+		} else if (!startDate.equals(that.startDate))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {
