@@ -1,5 +1,6 @@
 package EmployeePayroll_JDBC;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Assert;
@@ -26,13 +27,23 @@ public class EmployeePayrollServiceTest {
 	}
 	
 	@Test
-    public void givenEmployeePayroll_WhenUpdatedUsingPreparedStatement_ShouldSyncWithDB() throws EmployeePayrollException {
-    	EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-    	List<EmployeePayrollData> employeePayrollData;
-    	employeePayrollData =employeePayrollService.readEmployeePayrollData();
-		employeePayrollService.updateEmployeeSalary("Terisa",3000000.00);
-		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
+	public void givenEmployeePayroll_WhenUpdatedUsingPreparedStatement_ShouldSyncWithDB()
+			throws EmployeePayrollException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		List<EmployeePayrollData> employeePayrollData;
+		employeePayrollData = employeePayrollService.readEmployeePayrollData();
+		employeePayrollService.updateEmployeeSalary("Terisa", 3000000.00);
+		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
 		Assert.assertTrue(result);
     }
+	@Test
+	public void givenEmployeePayrollData_WhenRetrievedBasedOnStartDate_ShouldReturnResult() throws EmployeePayrollException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData();
+		LocalDate startDate = LocalDate.parse("2018-01-01");
+		LocalDate endDate = LocalDate.now();
+		List<EmployeePayrollData> matchingRecords = employeePayrollService.getEmployeePayrollDataByStartDate(startDate,endDate);
+		Assert.assertEquals(matchingRecords.get(0), employeePayrollService.getEmployeePayrollData("Harry"));
+	}
 
 }
